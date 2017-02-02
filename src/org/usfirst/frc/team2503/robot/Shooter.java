@@ -19,6 +19,10 @@ public class Shooter {
 		motorSpeed = joystick.getRawAxis(2);
 		System.out.println("Motor Speed: " + motorSpeed);
 		
+		if (motorSpeed > .5) {
+			System.out.println("JACK ass");
+		}
+		
 		if (joystick.getRawButton(2) == true) {
 			talon.set(-motorSpeed);
 		}
