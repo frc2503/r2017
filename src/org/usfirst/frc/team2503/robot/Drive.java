@@ -64,10 +64,11 @@ public class Drive {
 		frontLeft.set(valVertical + valRotational + valHorizontal);
 		frontRight.set(-(valVertical - valRotational - valHorizontal));
 		backLeft.set(valVertical + valRotational - valHorizontal);
-		backRight.set(-(valVertical - valRotational + valHorizontal));
+		backRight.set(-(valVertical - valRotational + valHorizontal)); 
+		
 	}
 	
-	public static void run () {
+	public static void teleop() {
 		
 		// Get the Current Controller Values
 		ctrlHorizontal = controller.getRawAxis(0); 
@@ -81,6 +82,13 @@ public class Drive {
 		
 		// Send the Controller Values to the Drive Function
 		drive(ctrlHorizontal, ctrlVertical, ctrlRotational);
+		
+	}
+	
+	public static void auton() {
+		
+		// Drive Forward
+		drive(0.0, 0.5, 0.0);
 		
 	}
 }

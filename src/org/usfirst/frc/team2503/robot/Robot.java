@@ -5,11 +5,16 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public class Robot extends IterativeRobot {
 
 	public void robotInit() {
-		Shooter.initalize();
 	}
 
 	public void teleopPeriodic() {
-		Shooter.run();
+		Drive.teleop();
+		Shoot.teleop();
+	}
+	
+	public void autonomousPeriodic() {
+		Drive.auton();
+		Shoot.auton();
 	}
 
 }
