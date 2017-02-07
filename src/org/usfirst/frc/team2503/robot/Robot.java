@@ -8,12 +8,12 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void teleopPeriodic() {
-		Drive.teleop();
+		NESDrive.teleop();
 		Shoot.teleop();
 	}
 	
 	public void autonomousPeriodic() {
-		Drive.auton();
+		NESDrive.auton();
 		Shoot.auton();
 	}
 

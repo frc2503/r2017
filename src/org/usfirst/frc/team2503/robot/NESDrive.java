@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj.Talon;
  * if they pass a threshold. After that each wheel calculates a final value based of off all inputs.
  */
 
-public class Drive {
+public class NESDrive {
 	
 	// Declaing a Joystick
-	public static Joystick controller = new Joystick(1);
+	public static Joystick controller = new Joystick(3);
 	
 	// Declaring the Talons
 	public static Talon frontLeft = new Talon(0);
@@ -69,16 +69,30 @@ public class Drive {
 	}
 	
 	public static void teleop() {
+		ctrlHorizontal = 0.0;
+		ctrlVertical = 0.0;
+		ctrlRotational = 0.0;
 		
-		// Get the Current Controller Values
-		ctrlHorizontal = controller.getRawAxis(0); 
-		ctrlVertical = -controller.getRawAxis(1); 
-		ctrlRotational = controller.getRawAxis(3);
+		if (controller.getRawAxis(1) > 0.1) {
+			ctrlHorizontal = 0.75;
+		}
+		else if (controller.getRawAxis(1) < -0.1) {
+			ctrlHorizontal = -0.75;
+		}
 		
-		// Take the Absolute Value of the Controller Values
-		ctrlHorizontal *= Math.abs(ctrlHorizontal);
-		ctrlVertical *= Math.abs(ctrlVertical);
-		ctrlRotational *= Math.abs(ctrlRotational);
+		if (controller.getRawAxis(4) > 0.1) {
+			ctrlVertical = -0.75;
+		}
+		else if (controller.getRawAxis(4) < -0.1) {
+			ctrlVertical = 0.75;
+		}
+		
+		if (controller.getRawButton(2) == true) {
+			ctrlRotational = 0.75;
+		}
+		else if (controller.getRawButton(3) == true) {
+			ctrlRotational = -0.75;
+		}
 		
 		// Send the Controller Values to the Drive Function
 		drive(ctrlHorizontal, ctrlVertical, ctrlRotational);
