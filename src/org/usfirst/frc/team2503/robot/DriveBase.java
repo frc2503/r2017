@@ -2,7 +2,7 @@ package org.usfirst.frc.team2503.robot;
 
 import edu.wpi.first.wpilibj.Talon;
 
-public class Drive {
+public class DriveBase {
 	public static Talon frontLeft = new Talon(0);
 	public static Talon frontRight = new Talon(2);
 	public static Talon backLeft = new Talon(1);
@@ -62,3 +62,4 @@ public class Drive {
 		backRight.set(-(valVertical - valRotational + valHorizontal)); 	
 	}
 }
+

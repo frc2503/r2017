@@ -15,6 +15,9 @@ import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.*;
 import org.opencv.objdetect.*;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
+
 /**
 * Vision class.
 *
@@ -23,6 +26,25 @@ import org.opencv.objdetect.*;
 * @author GRIP
 */
 public class Vision {
+	
+	Thread visionThread;
+	/*
+	 * visionThread = new Thread(() -> {
+			
+			// Create  a Camera Server 
+			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+			
+			// Set the Camera Resolution
+			camera.setResolution(640, 480);
+
+			// Get a CvSink. This will capture Mats from the camera
+			//CvSink cvSink = CameraServer.getInstance().getVideo();
+		});
+		
+		visionThread.setDaemon(true);
+		visionThread.start();
+
+	 */
 
 	//Outputs
 	private Mat hsvThresholdOutput = new Mat();
