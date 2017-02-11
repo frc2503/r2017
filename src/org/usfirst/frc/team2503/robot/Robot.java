@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot {
 	Thread visionThread;
-
+	
 	public void robotInit() {
 		visionThread = new Thread(() -> {
 			
