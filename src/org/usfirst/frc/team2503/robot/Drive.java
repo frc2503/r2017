@@ -31,14 +31,15 @@ public class Drive {
 	public static double valRotational = 0;
 	
 	// Declaring a Controller Movement Threshold
-	public static double valThreshold = .15;
+	public static double valThreshold = .05;
 	
 	// Drive Function
 	public static void drive(double ctrlHorizontal, double ctrlVertical, double ctrlRotational) {
 		
 		// If the Controller Value is Greater than the Threshold set it as the Motor Value
 		if (ctrlVertical > valThreshold || ctrlVertical < -valThreshold) {
-		    valVertical = ctrlVertical;
+		    valVertical = ctrlVertical*Math.abs(ctrlVertical);
+		    //valVertical = ctrlVertical;
 		}
 		else {
 		    valVertical = 0;
@@ -46,7 +47,8 @@ public class Drive {
 		
 		// If the Controller Value is Greater than the Threshold set it as the Motor Value
 		if (ctrlHorizontal > valThreshold || ctrlHorizontal < -valThreshold) {
-		    valHorizontal = ctrlHorizontal;
+			valHorizontal = ctrlHorizontal*Math.abs(ctrlHorizontal);
+			//valHorizontal = ctrlHorizontal;
 		}
 		else {
 		    valHorizontal = 0;
@@ -54,7 +56,8 @@ public class Drive {
 		
 		// If the Controller Value is Greater than the Threshold set it as the Motor Value
 		if (ctrlRotational > valThreshold || ctrlRotational < -valThreshold) {
-		    valRotational = ctrlRotational;
+			valRotational = ctrlRotational*Math.abs(ctrlRotational)/2;
+		    //valRotational = ctrlRotational;
 		}
 		else {
 		    valRotational = 0;

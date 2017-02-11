@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Talon;
 public class Intake {
 
 	public static Joystick joystick = new Joystick(1);
-	public static Talon talon = new Talon(4);
+	public static Talon talon = new Talon(5);
 	public static Double motorSpeed = 0.0;
 
 	public static void run(String direction) {
