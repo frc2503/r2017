@@ -26,8 +26,7 @@ public class Robot extends IterativeRobot {
 			 while(!Thread.interrupted()) {
                  cvSink.grabFrame(mat);
                  outputStream.putFrame(mat);
-                 
-                 //Vision.process(mat);
+                 Vision.process(mat);
              }
 		});
 		
@@ -46,8 +45,8 @@ public class Robot extends IterativeRobot {
 	
 	public void teleopPeriodic() {
 		//BallIntake.teleop();
-		BallShooter.teleop();
-		DriveBase.teleop();
+		//BallShooter.teleop();
+		//DriveBase.teleop();
 		//SuperShifter.teleop();
 	}
 }

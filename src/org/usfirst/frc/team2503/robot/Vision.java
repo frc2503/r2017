@@ -40,7 +40,8 @@ public class Vision {
 		double[] findBlobsCircularity = {0.48561151079136694, 0.7912457912457912};
 		boolean findBlobsDarkBlobs = true;
 		findBlobs(findBlobsInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
-
+		
+		//System.out.println("Blobs.total(): " + findBlobsOutput.total());
 	}
 
 	public Mat hsvThresholdOutput() {
@@ -99,11 +100,15 @@ public class Vision {
 			writer.write(config.toString());
 			writer.close();
 			blobDet.read(tempFile.getPath());
-		} catch (IOException e) {
+			
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		blobDet.detect(input, blobList);
+			
+		System.out.println(blobList);
 	}
 
 
