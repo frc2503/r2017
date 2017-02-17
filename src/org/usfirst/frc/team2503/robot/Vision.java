@@ -3,68 +3,39 @@ package org.usfirst.frc.team2503.robot;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.HashMap;
 
 import org.opencv.core.*;
-import org.opencv.core.Core.*;
 import org.opencv.features2d.FeatureDetector;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.*;
-import org.opencv.objdetect.*;
 
 public class Vision {
+	private static MatOfKeyPoint matOfBlobs = new MatOfKeyPoint();
 
-	//Outputs
-	private static Mat hsvThresholdOutput = new Mat();
-	private static MatOfKeyPoint findBlobsOutput = new MatOfKeyPoint();
-
-	static {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
-
-	public static void process(Mat source0) {
-		// Step HSV_Threshold0:
-		Mat hsvThresholdInput = source0;
+	public static Mat process(Mat matInput) {
 		double[] hsvThresholdHue = {0.0, 180.0};
 		double[] hsvThresholdSaturation = {0.0, 255.0};
-		double[] hsvThresholdValue = {20.638489208633093, 239.9747474747475};
-		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
+		double[] hsvThresholdValue = {0.0, 248.56060606060606};
+		hsvThreshold(matInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, matInput);
 
-		// Step Find_Blobs0:
-		Mat findBlobsInput = hsvThresholdOutput;
-		double findBlobsMinArea = 0.0;
-		double[] findBlobsCircularity = {0.48561151079136694, 0.7912457912457912};
+		double findBlobsMinArea = 130.0;
+		double[] findBlobsCircularity = {0.48561151079136694, 1.0};
 		boolean findBlobsDarkBlobs = true;
-		findBlobs(findBlobsInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
+		findBlobs(matInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, matOfBlobs);
 		
-		//System.out.println("Blobs.total(): " + findBlobsOutput.total());
+		return matInput;
 	}
 
-	public Mat hsvThresholdOutput() {
-		return hsvThresholdOutput;
-	}
-
-	public MatOfKeyPoint findBlobsOutput() {
-		return findBlobsOutput;
-	}
-
-	private static void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val,
-	    Mat out) {
+	private static void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val, Mat out) {
 		Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
-		Core.inRange(out, new Scalar(hue[0], sat[0], val[0]),
-			new Scalar(hue[1], sat[1], val[1]), out);
+		Core.inRange(out, new Scalar(hue[0], sat[0], val[0]), new Scalar(hue[1], sat[1], val[1]), out);
 	}
-
-	private static void findBlobs(Mat input, double minArea, double[] circularity,
-		Boolean darkBlobs, MatOfKeyPoint blobList) {
+	
+	private static void findBlobs(Mat input, double minArea, double[] circularity, Boolean darkBlobs, MatOfKeyPoint blobs) {
 		FeatureDetector blobDet = FeatureDetector.create(FeatureDetector.SIMPLEBLOB);
+		
 		try {
 			File tempFile = File.createTempFile("config", ".xml");
-
 			StringBuilder config = new StringBuilder();
 
 			config.append("<?xml version=\"1.0\"?>\n");
@@ -106,13 +77,10 @@ public class Vision {
 			e.printStackTrace();
 		}
 
-		blobDet.detect(input, blobList);
-			
-		System.out.println(blobList);
+		blobDet.detect(input, blobs);
+		
+		System.out.println(blobs.total());
+		
+		Features2d.drawKeypoints(input, blobs, input);
 	}
-
-
-
-
 }
-
