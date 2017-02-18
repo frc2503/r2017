@@ -9,10 +9,11 @@ import org.opencv.features2d.FeatureDetector;
 import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.*;
 
-public class Vision {
+public class Autonomous {
+	public static boolean isVisionProcessing = false;
 	private static MatOfKeyPoint matOfBlobs = new MatOfKeyPoint();
 
-	public static Mat process(Mat matInput) {
+	public static void processImage(Mat matInput) {
 		double[] hsvThresholdHue = {0.0, 180.0};
 		double[] hsvThresholdSaturation = {0.0, 255.0};
 		double[] hsvThresholdValue = {0.0, 248.56060606060606};
@@ -23,7 +24,7 @@ public class Vision {
 		boolean findBlobsDarkBlobs = true;
 		findBlobs(matInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, matOfBlobs);
 		
-		return matInput;
+		deliverGear(matOfBlobs);
 	}
 
 	private static void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val, Mat out) {
@@ -37,7 +38,6 @@ public class Vision {
 		try {
 			File tempFile = File.createTempFile("config", ".xml");
 			StringBuilder config = new StringBuilder();
-
 			config.append("<?xml version=\"1.0\"?>\n");
 			config.append("<opencv_storage>\n");
 			config.append("<thresholdStep>10.</thresholdStep>\n");
@@ -78,9 +78,21 @@ public class Vision {
 		}
 
 		blobDet.detect(input, blobs);
+	}
+	
+	public static void deliverGear(MatOfKeyPoint blobsMat) {
+		System.out.println("Blobs Found: " + blobsMat.total());
 		
-		System.out.println(blobs.total());
+		KeyPoint[] blobs = blobsMat.toArray();
 		
-		Features2d.drawKeypoints(input, blobs, input);
+		if (blobsMat.total() == 2) {
+			double x1 = blobs[0].pt.x;
+			double y1 = blobs[0].pt.y;
+			double x2 = blobs[1].pt.x;
+			double y2 = blobs[1].pt.y;
+			
+			double midpointX = (x1 + x2) / 2;
+			double midpointY = (y1 + y2) / 2;	
+		}
 	}
 }

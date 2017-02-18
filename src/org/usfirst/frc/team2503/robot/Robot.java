@@ -18,17 +18,18 @@ public class Robot extends IterativeRobot {
 			UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 			camera.setResolution(640, 480);
 			
-			Mat mat = new Mat();
+			Mat image = new Mat();
 
 			CvSource outputStream = CameraServer.getInstance().putVideo("2503 Camera Stream", 640, 480);
 			CvSink cvSink = CameraServer.getInstance().getVideo();
 			
 			 while(!Thread.interrupted()) {
-                 cvSink.grabFrame(mat);
-                 outputStream.putFrame(mat);
-
-                 // This Slows Everything Down
-                 //Vision.process(mat);
+                 cvSink.grabFrame(image);
+                 outputStream.putFrame(image);
+                 
+                 if (Autonomous.isVisionProcessing == true) {
+                	 Autonomous.processImage(image);
+                 }
              }
 		});
 		
@@ -37,20 +38,22 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void autonomousInit() {
+		Autonomous.isVisionProcessing = true;
 	}
 	
 	public void autonomousPeriodic() {
 	}
 	
 	public void teleopInit() {
+		Autonomous.isVisionProcessing = false;
 	}
 	
 	public void teleopPeriodic() {
-		Agitator.teleop();
-		//BallIntake.teleop();
-		BallShooter.teleop();
-		//DriveBase.teleop();
-		//SuperShifter.teleop();
+		Agitator.run();
+		Drive.run();
+		Intake.run();
+		//Shifter.run();
+		Shooter.run();
 	}
 }
 

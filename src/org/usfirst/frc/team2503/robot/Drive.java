@@ -2,7 +2,7 @@ package org.usfirst.frc.team2503.robot;
 
 import edu.wpi.first.wpilibj.Talon;
 
-public class DriveBase {
+public class Drive {
 	public static Talon frontLeft = new Talon(0);
 	public static Talon frontRight = new Talon(2);
 	public static Talon backLeft = new Talon(1);
@@ -18,7 +18,7 @@ public class DriveBase {
 
 	public static double valThreshold = .05;
 	
-	public static void teleop() {
+	public static void run() {
 		ctrlHorizontal = Controllers.throttle.getRawAxis(0); 
 		ctrlVertical = Controllers.throttle.getRawAxis(1) * -1; 
 		ctrlRotational = Controllers.throttle.getRawAxis(3);
@@ -28,10 +28,6 @@ public class DriveBase {
 		ctrlRotational *= Math.abs(ctrlRotational);
 		
 		drive(ctrlHorizontal, ctrlVertical, ctrlRotational);
-	}
-	
-	public static void auton() {
-		drive(0.0, 0.25, 0.0);
 	}
 	
 	public static void drive(double ctrlHorizontal, double ctrlVertical, double ctrlRotational) {
