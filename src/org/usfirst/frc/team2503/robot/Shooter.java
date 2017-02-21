@@ -8,6 +8,7 @@ public class Shooter {
 	public static void run() {	
 		if (Controllers.gamepad.getRawButton(1) == true)
 		{
+			System.out.println("Shooter Speed: " + Controllers.throttle.getRawAxis(2));
 			talonShooter.set(Controllers.throttle.getRawAxis(2));
 		}
 		else

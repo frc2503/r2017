@@ -10,6 +10,9 @@ public class Intake {
 		{
 			talonIntake.set(1);
 		}
+		else if (Controllers.gamepad.getRawButton(8) == true) {
+			talonIntake.set(-1);
+		}
 		else {
 			talonIntake.set(0);
 		}

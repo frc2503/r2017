@@ -9,22 +9,37 @@ import org.opencv.features2d.FeatureDetector;
 import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.*;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.AnalogInput;
+
 public class Autonomous {
 	public static boolean isVisionProcessing = false;
+	public static boolean isMovingToTarget = false;
+	public static double midpoint = 0.0;
+	public static double matWidth = 0.0;
+	
+	public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+	public static AnalogInput ultrasonic = new AnalogInput(0);
 	private static MatOfKeyPoint matOfBlobs = new MatOfKeyPoint();
 
-	public static void processImage(Mat matInput) {
+	public static Mat processImage(Mat matInput) {
+		matWidth = matInput.width();
+		
 		double[] hsvThresholdHue = {0.0, 180.0};
 		double[] hsvThresholdSaturation = {0.0, 255.0};
-		double[] hsvThresholdValue = {0.0, 248.56060606060606};
+		double[] hsvThresholdValue = {0.0, 249.0};
 		hsvThreshold(matInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, matInput);
 
 		double findBlobsMinArea = 130.0;
-		double[] findBlobsCircularity = {0.48561151079136694, 1.0};
+		double[] findBlobsCircularity = {0.4, 0.9410774410774411};
 		boolean findBlobsDarkBlobs = true;
 		findBlobs(matInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, matOfBlobs);
+				
+		Features2d.drawKeypoints(matInput, matOfBlobs, matInput);
 		
-		deliverGear(matOfBlobs);
+		return matInput;
+		
+		//deliverGear(matOfBlobs);
 	}
 
 	private static void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val, Mat out) {
@@ -81,18 +96,30 @@ public class Autonomous {
 	}
 	
 	public static void deliverGear(MatOfKeyPoint blobsMat) {
-		System.out.println("Blobs Found: " + blobsMat.total());
+		System.out.println("Blobs Found: " + blobsMat.total() + " Current Midpoint: " + midpoint + " Gyro: " + gyro.getAngle());
 		
 		KeyPoint[] blobs = blobsMat.toArray();
 		
 		if (blobsMat.total() == 2) {
 			double x1 = blobs[0].pt.x;
-			double y1 = blobs[0].pt.y;
 			double x2 = blobs[1].pt.x;
-			double y2 = blobs[1].pt.y;
-			
-			double midpointX = (x1 + x2) / 2;
-			double midpointY = (y1 + y2) / 2;	
+			midpoint = (x1 + x2) / 2;
+		}
+		
+		if (midpoint > matWidth + 25) {
+			System.out.println("Greater");
+			Drive.drive(0.0, 0.0, 0.75); 
+		}
+		else if (midpoint < matWidth - 25) {
+			System.out.println("Lesser");
+			Drive.drive(0.0, 0.0, -0.75);
+		}
+		else if (ultrasonic.getVoltage() > 1.0) {
+			System.out.println("Centered");
+			Drive.drive(0.0, 0.5, -0.15);
+		}
+		else {
+			Drive.drive(0.0, 0.0, 0.0);
 		}
 	}
 }

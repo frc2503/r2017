@@ -6,15 +6,18 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class Shifter {
 	public static Compressor compressor = new Compressor(0);
 	public static DoubleSolenoid shiftController = new DoubleSolenoid(0, 1);
-
-	public static void run() {
-		compressor.setClosedLoopControl(true);
-		shiftController.set(DoubleSolenoid.Value.kForward);
 		
-		if (Controllers.throttle.getRawButton(5) == true) {
+	public static void run() {
+		System.out.println("Compressor Value: " + compressor.getCompressorCurrent());
+		
+		if (compressor.getCompressorCurrent() > 8.15) {
+			//compressor.setClosedLoopControl(false);
+		}
+
+		if (Controllers.gamepad.getRawButton(9)) {
 			shiftController.set(DoubleSolenoid.Value.kReverse);
 		}
-		else if(Controllers.throttle.getRawButton(6) == true){
+		else if(Controllers.gamepad.getRawButton(10) == true){
 			shiftController.set(DoubleSolenoid.Value.kForward);
 		}	
 	}	
