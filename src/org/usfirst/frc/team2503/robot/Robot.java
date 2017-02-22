@@ -26,15 +26,12 @@ public class Robot extends IterativeRobot {
 			 while(!Thread.interrupted()) {
                  cvSink.grabFrame(image);
                  
-                 /*
-                 outputStream.putFrame(image);
-                 
                  if (Autonomous.isVisionProcessing == true) {
-                	 Autonomous.processImage(image);
+                	 outputStream.putFrame(Autonomous.processImage(image));
                  }
-                 */
-                 
-                 outputStream.putFrame(Autonomous.processImage(image));
+                 else {
+                	 outputStream.putFrame(image);
+                 }
              }
 		});
 		
@@ -53,9 +50,12 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		Autonomous.isVisionProcessing = false;
 		Shifter.compressor.setClosedLoopControl(true);
+		
 	}
 	
 	public void teleopPeriodic() {
+		System.out.println("value: " + Autonomous.ultrasonic.getValue());
+		System.out.println("voltage: " + Autonomous.ultrasonic.getVoltage());
 		Agitator.run();
 		Drive.run();
 		Intake.run();

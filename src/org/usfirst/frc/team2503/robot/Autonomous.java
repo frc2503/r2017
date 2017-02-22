@@ -14,33 +14,30 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 public class Autonomous {
 	public static boolean isVisionProcessing = false;
-	public static boolean isMovingToTarget = false;
+	public static boolean isDrivingToTarget = false;
 	public static double midpoint = 0.0;
-	public static double matWidth = 0.0;
 	
 	public static ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-	public static AnalogInput ultrasonic = new AnalogInput(0);
+	public static AnalogInput ultrasonic = new AnalogInput(1);
 	private static MatOfKeyPoint matOfBlobs = new MatOfKeyPoint();
-
-	public static Mat processImage(Mat matInput) {
-		matWidth = matInput.width();
-		
-		double[] hsvThresholdHue = {0.0, 180.0};
-		double[] hsvThresholdSaturation = {0.0, 255.0};
-		double[] hsvThresholdValue = {0.0, 249.0};
-		hsvThreshold(matInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, matInput);
+	
+	public static Mat processImage(Mat image) {		
+		double[] hsvThresholdHue = {0, 180.0};
+		double[] hsvThresholdSaturation = {0, 255};
+		double[] hsvThresholdValue = {0.0, 251.0};
+		hsvThreshold(image, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, image);
 
 		double findBlobsMinArea = 130.0;
 		double[] findBlobsCircularity = {0.4, 0.9410774410774411};
 		boolean findBlobsDarkBlobs = true;
-		findBlobs(matInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, matOfBlobs);
+		findBlobs(image, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, matOfBlobs);
 				
-		Features2d.drawKeypoints(matInput, matOfBlobs, matInput);
+		Features2d.drawKeypoints(image, matOfBlobs, image);
+		deliverGear(matOfBlobs);
 		
-		return matInput;
-		
-		//deliverGear(matOfBlobs);
+		return image;	
 	}
+
 
 	private static void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val, Mat out) {
 		Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
@@ -86,7 +83,6 @@ public class Autonomous {
 			writer.write(config.toString());
 			writer.close();
 			blobDet.read(tempFile.getPath());
-			
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -96,30 +92,58 @@ public class Autonomous {
 	}
 	
 	public static void deliverGear(MatOfKeyPoint blobsMat) {
-		System.out.println("Blobs Found: " + blobsMat.total() + " Current Midpoint: " + midpoint + " Gyro: " + gyro.getAngle());
+		System.out.println("");
 		
 		KeyPoint[] blobs = blobsMat.toArray();
 		
-		if (blobsMat.total() == 2) {
-			double x1 = blobs[0].pt.x;
-			double x2 = blobs[1].pt.x;
-			midpoint = (x1 + x2) / 2;
+		double x1 = 0.0;
+		double x2 = 0.0;
+		
+		for (int i = 0; i < blobs.length; i++) {
+			if (x1 != 0.0) {
+				x2 = blobs[i].pt.x;
+			}
+			else {
+				x1 = blobs[i].pt.x;
+			}
 		}
 		
-		if (midpoint > matWidth + 25) {
-			System.out.println("Greater");
-			Drive.drive(0.0, 0.0, 0.75); 
+		System.out.println("x1: " + x1);
+		System.out.println("x2: " + x2);
+		
+		if (x1 != 0.0 && x2 != 0.0) {
+			midpoint = (x1 + x2) * 0.5;
 		}
-		else if (midpoint < matWidth - 25) {
-			System.out.println("Lesser");
-			Drive.drive(0.0, 0.0, -0.75);
-		}
-		else if (ultrasonic.getVoltage() > 1.0) {
-			System.out.println("Centered");
-			Drive.drive(0.0, 0.5, -0.15);
+		
+		System.out.println("Midpoint: " + midpoint);
+		System.out.println("Ultrasonic: " + ultrasonic.getValue());
+		
+		if (isDrivingToTarget == true) {
+			System.out.println("Moving Forward!");
+			Drive.drive(0.0, 0.5, -0.25);
 		}
 		else {
-			Drive.drive(0.0, 0.0, 0.0);
+			if (midpoint > 320) {
+				System.out.println("Moving Right!");
+				Drive.drive(0.0, 0.0, 0.75);
+				isDrivingToTarget = false;
+			}
+			else if (midpoint < 310) {
+				System.out.println("Moving Left!");
+				Drive.drive(0.0, 0.0, -0.75);
+				isDrivingToTarget = false;
+			}
+			else if (midpoint > 310 && midpoint < 330) {
+				System.out.println("Moving Forward!");
+				Drive.drive(0.0, 0.5, -0.25);
+				isDrivingToTarget = true;
+			}
+			else {
+				System.out.println("Stopped!");
+				Drive.drive(0.0, 0.0, 0.0);
+				isDrivingToTarget = false;
+			}
 		}
+		
 	}
 }
